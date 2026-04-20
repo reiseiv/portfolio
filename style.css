@@ -1,0 +1,201 @@
+/* =========================================
+   Variables
+   ========================================= */
+:root {
+    /* Color Palette */
+    --bg-base: #05020a;
+    --accent-purple: #9333ea;
+    --accent-glow: #d8b4fe;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    
+    /* Glassmorphism tokens */
+    --glass-bg: rgba(20, 15, 30, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    
+    /* Utils */
+    --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* =========================================
+   Reset & Base
+   ========================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-base);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+/* =========================================
+   Background Effects (Chromatic Mash-Up)
+   ========================================= */
+.blob {
+    position: absolute;
+    filter: blur(80px);
+    z-index: -1;
+    opacity: 0.8;
+    transition: transform 0.1s ease-out;
+}
+
+.blob-1 { width: 450px; height: 450px; background: radial-gradient(circle, #a855f7, transparent 70%); top: -50px; left: -100px; }
+.blob-2 { width: 550px; height: 550px; background: radial-gradient(circle, #ec4899, transparent 70%); bottom: -150px; right: -50px; }
+.blob-3 { width: 350px; height: 350px; background: radial-gradient(circle, #6366f1, transparent 70%); top: 40%; left: 40%; }
+
+/* =========================================
+   Layout: Bento Grid
+   ========================================= */
+.container {
+    width: 100%;
+    max-width: 900px;
+    padding: 20px;
+    z-index: 1;
+}
+
+.bento-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 24px;
+}
+
+/* =========================================
+   Component: Glass Cards w/ Ambient Light
+   ========================================= */
+.bento-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid var(--glass-border);
+    border-radius: 32px;
+    padding: 40px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    transition: transform var(--transition-smooth), border-color var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Content layer over ambient light */
+.bento-card > * { position: relative; z-index: 1; }
+
+/* Dynamic ambient glow */
+.bento-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(147, 51, 234, 0.15), transparent 40%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.bento-card:hover { transform: translateY(-5px); border-color: rgba(147, 51, 234, 0.4); }
+.bento-card:hover::before { opacity: 1; }
+
+/* =========================================
+   Section: Profile & Socials
+   ========================================= */
+.profile { grid-column: 1 / 2; grid-row: 1 / 2; display: flex; flex-direction: column; align-items: center; justify-content: center; aspect-ratio: 1 / 1; }
+.avatar-container { width: 140px; height: 140px; border-radius: 50%; overflow: hidden; margin-bottom: 24px; border: 2px solid rgba(255, 255, 255, 0.1); box-shadow: 0 0 40px rgba(147, 51, 234, 0.3); }
+.avatar { width: 100%; height: 100%; object-fit: cover; }
+.username { font-size: 1.5rem; font-weight: 400; letter-spacing: 1px; }
+
+.socials { grid-column: 1 / 2; grid-row: 2 / 3; display: flex; justify-content: center; align-items: center; gap: 20px; padding: 24px; }
+.social-btn { width: 50px; height: 50px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); display: flex; justify-content: center; align-items: center; color: var(--text-main); font-size: 1.4rem; text-decoration: none; border: 1px solid var(--glass-border); transition: all var(--transition-smooth); }
+.social-btn:hover { background: var(--accent-purple); transform: scale(1.1); color: white; box-shadow: 0 0 20px rgba(147, 51, 234, 0.5); }
+
+/* Tooltip util */
+.copy-wrapper { position: relative; display: inline-block; }
+.tooltip { position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.8); color: white; padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(5px); }
+.copy-wrapper:hover .tooltip { opacity: 1; }
+
+/* =========================================
+   Section: Main Content Area
+   ========================================= */
+.achievements { grid-column: 2 / 3; grid-row: 1 / 3; display: flex; flex-direction: column; }
+.achievements-header { background: rgba(0, 0, 0, 0.2); padding: 12px 24px; border-radius: 20px; margin-bottom: 30px; align-self: center; border: 1px solid rgba(255,255,255,0.03); }
+.achievements-header h2 { font-weight: 300; font-size: 1.2rem; letter-spacing: 2px; transition: color 0.3s ease; text-align: center; }
+
+/* Reusable link cards (Trading & Dev) */
+.content-section { display: flex; flex-direction: column; gap: 16px; margin: auto 0; }
+.item-link { display: flex; align-items: center; gap: 16px; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border); padding: 16px 20px; border-radius: 16px; text-decoration: none; color: var(--text-main); transition: all var(--transition-smooth); }
+.item-link:hover { background: rgba(147, 51, 234, 0.15); border-color: rgba(147, 51, 234, 0.4); transform: translateX(5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+.item-icon { font-size: 1.5rem; color: var(--accent-glow); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 12px; }
+.item-text { display: flex; flex-direction: column; flex-grow: 1; }
+.item-title { font-weight: 500; font-size: 1.1rem; }
+.item-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
+.item-arrow { color: rgba(255,255,255,0.2); transition: color 0.3s ease; }
+.item-link:hover .item-arrow { color: var(--accent-glow); transform: translateX(3px); }
+.disabled-link { opacity: 0.5; pointer-events: none; }
+
+/* Gaming Specifics */
+.games-list { gap: 25px; }
+.game-item { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; }
+.game-name { font-size: 1.1rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px;}
+.gamepad-icon { font-size: 0.9rem; color: #cbd5e1; }
+
+/* Rank Badges */
+.rank-badge { padding: 8px 16px; border-radius: 12px; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+.rank-grandmaster { background: linear-gradient(135deg, #7f1d1d, #ef4444); color: white; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
+.rank-master { background: linear-gradient(135deg, #6b21a8, #d8b4fe); color: white; box-shadow: 0 0 15px rgba(216, 180, 254, 0.3); }
+.rank-nohesi { background: linear-gradient(135deg, #1e293b, #475569); color: white; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 0 10px rgba(255,255,255,0.05); }
+.rank-unknown { background: rgba(255, 255, 255, 0.1); color: #fef08a; border: 1px solid #fef08a; }
+
+/* =========================================
+   Component: Segmented Control
+   ========================================= */
+.switch-container { grid-column: 2 / 3; grid-row: 3 / 4; display: flex; justify-content: center; align-items: center; padding: 20px; }
+
+.segmented-control {
+    position: relative; display: flex; width: 100%; max-width: 450px;
+    background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border);
+    border-radius: 50px; padding: 6px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.slider-indicator {
+    position: absolute; top: 6px; bottom: 6px; left: 6px;
+    width: calc((100% - 12px) / 3);
+    background: var(--accent-purple); border-radius: 40px;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    box-shadow: 0 4px 15px rgba(147, 51, 234, 0.4); z-index: 1;
+}
+
+.tab-label {
+    flex: 1; text-align: center; cursor: pointer; position: relative; z-index: 2;
+    padding: 10px 0; font-size: 0.9rem; font-weight: 500;
+}
+
+.tab-label input { display: none; }
+.tab-label span { color: var(--text-muted); transition: color 0.3s ease; letter-spacing: 0.5px; }
+.tab-label input:checked + span { color: white; }
+
+/* =========================================
+   Animations
+   ========================================= */
+.content-fade { animation: contentFadeIn 0.4s ease-in-out forwards; }
+@keyframes contentFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.fade-in { opacity: 0; transform: translateY(20px); animation: fadeInUp 0.8s forwards; animation-delay: var(--delay); }
+@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+/* =========================================
+   Media Queries
+   ========================================= */
+@media (max-width: 768px) {
+    .bento-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+    .profile, .socials, .achievements, .switch-container { grid-column: 1 / 2; grid-row: auto; }
+    .profile { aspect-ratio: auto; padding: 40px 20px; }
+    .tab-label span { font-size: 0.75rem; }
+}

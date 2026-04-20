@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>reiseiv / Portfolio</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <main class="container">
+        <div class="bento-grid">
+            
+            <div class="bento-card profile fade-in" style="--delay: 0.1s">
+                <div class="avatar-container">
+                    <img src="https://avatars.githubusercontent.com/u/276539815?v=4" alt="reiseiv" class="avatar">
+                </div>
+                <h1 class="username">reiseiv</h1>
+            </div>
+
+            <div class="bento-card socials fade-in" style="--delay: 0.2s">
+                <div class="copy-wrapper">
+                    <a href="#" class="social-btn" id="discord-btn" aria-label="Copy Discord Tag">
+                        <i class="fa-brands fa-discord"></i>
+                    </a>
+                    <span class="tooltip" id="copy-tooltip">Copy tag</span>
+                </div>
+                <a href="https://x.com/reiseiv_" target="_blank" rel="noopener noreferrer" class="social-btn">
+                    <i class="fa-brands fa-twitter"></i>
+                </a>
+                <a href="https://github.com/reiseiv" target="_blank" rel="noopener noreferrer" class="social-btn" id="github-link">
+                    <i class="fa-brands fa-github"></i>
+                </a>
+            </div>
+
+            <div class="bento-card achievements fade-in" style="--delay: 0.3s">
+                <div class="achievements-header">
+                    <h2 id="section-title">trading achievements</h2>
+                </div>
+
+                <div id="trading-content" class="content-section">
+                    <a href="https://reiseiv.github.io/" target="_blank" rel="noopener noreferrer" class="item-link">
+                        <div class="item-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                        <div class="item-text">
+                            <span class="item-title">Darmowy kurs Orderflow</span>
+                            <span class="item-subtitle">Odbierz dostęp</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right item-arrow"></i>
+                    </a>
+
+                    <a href="https://rei-pnl-front.pages.dev/" target="_blank" rel="noopener noreferrer" class="item-link">
+                        <div class="item-icon" style="color: #34d399;"><i class="fa-solid fa-chart-line"></i></div>
+                        <div class="item-text">
+                            <span class="item-title">Sprawdź mój PnL</span>
+                            <span class="item-subtitle">Realtime tracking</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right item-arrow"></i>
+                    </a>
+                </div>
+
+                <div id="dev-content" class="content-section" style="display: none;">
+                    <a href="https://github.com/reiseiv/reiseiv.github.io" target="_blank" rel="noopener noreferrer" class="item-link">
+                        <div class="item-icon" style="color: #f8fafc;"><i class="fa-brands fa-github"></i></div>
+                        <div class="item-text">
+                            <span class="item-title">Orderflow Landing Page</span>
+                            <span class="item-subtitle">reiseiv.github.io repo</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right item-arrow"></i>
+                    </a>
+                    
+                    <a href="#" class="item-link disabled-link">
+                        <div class="item-icon" style="color: #60a5fa;"><i class="fa-solid fa-code"></i></div>
+                        <div class="item-text">
+                            <span class="item-title">Kolejny projekt</span>
+                            <span class="item-subtitle">Wkrótce...</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div id="gaming-content" class="content-section games-list" style="display: none;">
+                    <div class="game-item">
+                        <span class="game-name">League of Legends:</span>
+                        <div class="rank-badge rank-grandmaster">Grandmaster</div>
+                    </div>
+                    <div class="game-item">
+                        <span class="game-name">Apex Legends:</span>
+                        <div class="rank-badge rank-master">Master</div>
+                    </div>
+                    <div class="game-item">
+                        <span class="game-name">No Hesi <i class="fa-solid fa-gamepad gamepad-icon"></i></span>
+                        <div class="rank-badge rank-nohesi">r1464</div>
+                    </div>
+                    <div class="game-item">
+                        <span class="game-name">Overwatch:</span>
+                        <div class="rank-badge rank-unknown">?</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bento-card switch-container fade-in" style="--delay: 0.4s">
+                <div class="segmented-control">
+                    <div class="slider-indicator"></div>
+                    
+                    <label class="tab-label">
+                        <input type="radio" name="category" value="trading" checked>
+                        <span>trading</span>
+                    </label>
+                    <label class="tab-label">
+                        <input type="radio" name="category" value="dev">
+                        <span>design / dev</span>
+                    </label>
+                    <label class="tab-label">
+                        <input type="radio" name="category" value="gaming">
+                        <span>gaming</span>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
