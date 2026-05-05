@@ -93,7 +93,7 @@ const Portfolio = (() => {
         });
     };
 
-    // --- Discord redirect (FIXED) ---
+    // --- Discord redirect ---
     const initDiscord = () => {
         if (!ui.discordBtn) return;
 
@@ -157,8 +157,12 @@ const Portfolio = (() => {
         initAmbientGlow();
         initBlobParallax();
 
+        // OBSŁUGA KLAWIATURY (ENTER + SPACJA)
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && STATE.current === 'COVER') {
+            if ((e.key === 'Enter' || e.code === 'Space') && STATE.current === 'COVER') {
+                // Zapobiega przewijaniu strony przy naciśnięciu spacji
+                if (e.code === 'Space') e.preventDefault();
+                
                 executeCoverTransition();
             }
         });
