@@ -1,116 +1,170 @@
 /**
- * @file overview UI Logic for Portfolio
- * Handles segmented control tabs, clipboard copy, ambient mouse glow, and background parallax.
+ * Portfolio orchestration with cover sequence and ambient systems
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+const Portfolio = (() => {
     
-    // --- Config & DOM Elements ---
-    const NICKNAME = "reiseiv";
+    const STATE = { current: 'COVER', hasEntered: false };
+    const TRANSITION_DURATION = 1600;
     
     const ui = {
-        tabs: document.querySelectorAll('input[name="category"]'),
-        indicator: document.querySelector('.slider-indicator'),
-        title: document.getElementById('section-title'),
-        cards: document.querySelectorAll('.bento-card'),
-        blobs: document.querySelectorAll('.blob'),
-        discordBtn: document.getElementById('discord-btn'),
-        tooltip: document.getElementById('copy-tooltip'),
+        cover: null,
+        portfolio: null,
+        enterBtn: null,
+        tabs: null,
+        indicator: null,
+        title: null,
+        cards: null,
+        blobs: null,
+        discordBtn: null,
+        tooltip: null
     };
 
-    const contentMap = {
-        'trading': document.getElementById('trading-content'),
-        'dev': document.getElementById('dev-content'),
-        'gaming': document.getElementById('gaming-content')
-    };
+    const contentMap = {};
 
     const titleMap = {
-        'trading': 'trading achievements',
+        'trading': 'trading infrastructure',
         'dev': 'design / dev projects',
         'gaming': 'gaming achievements'
     };
 
-    // --- Utils ---
-    
-    /**
-     * Forces reflow to restart CSS animations
-     * @param {HTMLElement} element 
-     */
-    const triggerAnimation = (element) => {
-        element.classList.remove('content-fade');
-        void element.offsetWidth; // trigger reflow
-        element.classList.add('content-fade');
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => document.querySelectorAll(sel);
+
+    const triggerReflow = (el) => {
+        el.classList.remove('content-fade');
+        void el.offsetWidth;
+        el.classList.add('content-fade');
     };
 
-    // --- Event Listeners ---
+    const rand = (min, max) => Math.random() * (max - min) + min;
 
-    // 1. Segmented Control Handler
-    ui.tabs.forEach((tab, index) => {
-        tab.addEventListener('change', (e) => {
-            const selectedValue = e.target.value;
-            
-            // Move indicator background
-            ui.indicator.style.transform = `translateX(${index * 100}%)`;
-            
-            // Update title
-            ui.title.textContent = titleMap[selectedValue];
+    // --- Cover ---
+    const initCoverAmbient = () => {
+        const container = $('.cover-particles');
+        if (!container) return;
 
-            // Toggle visibility
-            Object.values(contentMap).forEach(el => el.style.display = 'none');
-            const targetEl = contentMap[selectedValue];
-            targetEl.style.display = 'flex';
-
-            // Trigger enter animation
-            triggerAnimation(targetEl);
-        });
-    });
-
-    // 2. Clipboard Handler (Discord)
-    ui.discordBtn?.addEventListener('click', async (e) => {
-        e.preventDefault(); 
-        
-        try {
-            await navigator.clipboard.writeText(NICKNAME);
-            
-            // Success state
-            ui.tooltip.textContent = "Copied!";
-            ui.tooltip.style.color = "var(--accent-glow)"; 
-            
-            // Button bounce effect
-            ui.discordBtn.style.transform = "scale(0.95)";
-            setTimeout(() => { ui.discordBtn.style.transform = "scale(1.1)"; }, 100);
-            
-            // Reset state
-            setTimeout(() => {
-                ui.tooltip.textContent = "Copy tag";
-                ui.tooltip.style.color = "white";
-                ui.discordBtn.style.transform = "";
-            }, 2000);
-
-        } catch (err) {
-            console.error('Clipboard write failed: ', err);
+        for (let i = 0; i < 40; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.cssText = `
+                left: ${rand(0, 100)}%;
+                top: ${rand(0, 100)}%;
+                width: ${rand(2, 6)}px;
+                height: ${rand(2, 6)}px;
+                animation-delay: ${rand(0, 3)}s;
+                animation-duration: ${rand(8, 15)}s;
+            `;
+            container.appendChild(particle);
         }
-    });
+    };
 
-    // 3. Dynamic Ambient Light Effect
-    ui.cards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            // Pass mouse coords to CSS custom props
-            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+    const executeCoverTransition = () => {
+        if (STATE.hasEntered) return;
+        STATE.hasEntered = true;
+
+        ui.cover.classList.add('cover-exit');
+        
+        setTimeout(() => {
+            ui.cover.style.display = 'none';
+            ui.portfolio.style.display = 'flex';
+
+            requestAnimationFrame(() => {
+                ui.portfolio.classList.add('portfolio-enter');
+                STATE.current = 'PORTFOLIO';
+            });
+        }, TRANSITION_DURATION);
+    };
+
+    // --- Tabs ---
+    const initTabSystem = () => {
+        ui.tabs.forEach((tab, index) => {
+            tab.addEventListener('change', (e) => {
+                const value = e.target.value;
+
+                ui.indicator.style.transform = `translateX(${index * 100}%)`;
+                ui.title.textContent = titleMap[value];
+
+                Object.values(contentMap).forEach(el => el.style.display = 'none');
+                const target = contentMap[value];
+                target.style.display = 'flex';
+                triggerReflow(target);
+            });
         });
-    });
+    };
 
-    // 4. Background Blob Parallax
-    document.addEventListener('mousemove', (e) => {
-        // Normalize mouse coordinates (-0.5 to 0.5)
-        const x = (e.clientX / window.innerWidth) - 0.5;
-        const y = (e.clientY / window.innerHeight) - 0.5;
+    // --- Discord redirect (FIXED) ---
+    const initDiscord = () => {
+        if (!ui.discordBtn) return;
 
-        // Apply distinct translation vectors for parallax depth
-        if(ui.blobs[0]) ui.blobs[0].style.transform = `translate(${x * 80}px, ${y * 80}px)`;
-        if(ui.blobs[1]) ui.blobs[1].style.transform = `translate(${x * -100}px, ${y * -60}px)`;
-        if(ui.blobs[2]) ui.blobs[2].style.transform = `translate(${x * 60}px, ${y * -120}px)`;
-    });
-});
+        ui.discordBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            window.open('https://dsc.gg/rei', '_blank');
+
+            ui.tooltip.textContent = "Join";
+            ui.tooltip.style.color = "var(--accent-glow)";
+
+            setTimeout(() => {
+                ui.tooltip.textContent = "Discord";
+                ui.tooltip.style.color = "white";
+            }, 2000);
+        });
+    };
+
+    const initAmbientGlow = () => {
+        ui.cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+                card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+            });
+        });
+    };
+
+    const initBlobParallax = () => {
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) - 0.5;
+            const y = (e.clientY / window.innerHeight) - 0.5;
+
+            if (ui.blobs[0]) ui.blobs[0].style.transform = `translate(${x * 80}px, ${y * 80}px)`;
+            if (ui.blobs[1]) ui.blobs[1].style.transform = `translate(${x * -100}px, ${y * -60}px)`;
+            if (ui.blobs[2]) ui.blobs[2].style.transform = `translate(${x * 60}px, ${y * -120}px)`;
+        });
+    };
+
+    const init = () => {
+        ui.cover = $('.cover-page');
+        ui.portfolio = $('.portfolio-main');
+        ui.enterBtn = $('.enter-btn');
+        ui.tabs = $$('input[name="category"]');
+        ui.indicator = $('.slider-indicator');
+        ui.title = $('#section-title');
+        ui.cards = $$('.bento-card');
+        ui.blobs = $$('.blob');
+        ui.discordBtn = $('#discord-btn');
+        ui.tooltip = $('#copy-tooltip');
+
+        contentMap.trading = $('#trading-content');
+        contentMap.dev = $('#dev-content');
+        contentMap.gaming = $('#gaming-content');
+
+        initCoverAmbient();
+        ui.enterBtn?.addEventListener('click', executeCoverTransition);
+
+        initTabSystem();
+        initDiscord();
+        initAmbientGlow();
+        initBlobParallax();
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && STATE.current === 'COVER') {
+                executeCoverTransition();
+            }
+        });
+    };
+
+    return { init };
+})();
+
+document.addEventListener('DOMContentLoaded', Portfolio.init);
